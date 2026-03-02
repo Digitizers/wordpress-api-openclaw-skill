@@ -62,13 +62,13 @@ cp config/sites.example.json config/sites.json
 **3. Use the CLI wrapper:**
 ```bash
 # List sites
-./wp --list-sites
+./wp.sh --list-sites
 
 # Update post on specific site
-./wp site1 update-post --id 123 --content "New content"
+./wp.sh site1 update-post --id 123 --content "New content"
 
 # Update on all sites
-./wp all update-post --id 456 --status "publish"
+./wp.sh all update-post --id 456 --status "publish"
 
 # Batch update
 python3 scripts/batch_update.py --group all --post-ids 123,456 --status "publish"

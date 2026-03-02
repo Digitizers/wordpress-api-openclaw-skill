@@ -31,26 +31,26 @@ cp config/sites.example.json config/sites.json
 
 ```bash
 # Update a post
-./wp digitizer-studio update-post \
+./wp.sh digitizer-studio update-post \
   --id 123 \
   --title "New Title" \
   --content "Updated content" \
   --status "publish"
 
 # Create a new post
-./wp digitizer-studio create-post \
+./wp.sh digitizer-studio create-post \
   --title "My New Post" \
   --content "<p>Post content here</p>" \
   --status "draft"
 
 # Get post details
-./wp digitizer-studio get-post --id 123
+./wp.sh digitizer-studio get-post --id 123
 
 # List recent posts
-./wp digitizer-studio list-posts --per-page 10 --status "publish"
+./wp.sh digitizer-studio list-posts --per-page 10 --status "publish"
 
 # Update with content from file
-./wp digitizer-studio update-post \
+./wp.sh digitizer-studio update-post \
   --id 123 \
   --content-file "./content/article.html" \
   --status "publish"
@@ -60,15 +60,15 @@ cp config/sites.example.json config/sites.json
 
 ```bash
 # Update same post on all Digitizer sites
-./wp digitizer update-post \
+./wp.sh digitizer update-post \
   --id 456 \
   --status "publish"
 
 # List sites
-./wp --list-sites
+./wp.sh --list-sites
 
 # List groups
-./wp --list-groups
+./wp.sh --list-groups
 ```
 
 ## Batch Operations
@@ -120,7 +120,7 @@ python3 scripts/update_post.py \
 
 ```bash
 # Content in file: article.html
-./wp digitizer update-post \
+./wp.sh digitizer update-post \
   --id 123 \
   --content-file "article.html" \
   --status "publish"

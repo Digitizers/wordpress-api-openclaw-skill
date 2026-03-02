@@ -36,13 +36,13 @@ cp config/sites.example.json config/sites.json
 # Edit config/sites.json with your sites
 
 # List configured sites
-./wp --list-sites
+./wp.sh --list-sites
 
 # Update post on specific site
-./wp digitizer-studio update-post --id 123 --content "New content"
+./wp.sh digitizer-studio update-post --id 123 --content "New content"
 
 # Run on all sites in a group
-./wp digitizer update-post --id 456 --status "publish"
+./wp.sh digitizer update-post --id 456 --status "publish"
 
 # Batch update across multiple sites
 python3 scripts/batch_update.py --group digitizer --post-ids 123,456 --status "publish"
@@ -105,21 +105,21 @@ cp config/sites.example.json config/sites.json
 }
 ```
 
-### CLI Wrapper (`./wp`)
+### CLI Wrapper (`./wp.sh`)
 
 ```bash
 # List sites
-./wp --list-sites
-./wp --list-groups
+./wp.sh --list-sites
+./wp.sh --list-groups
 
 # Single site operations
-./wp my-site update-post --id 123 --content "..."
-./wp my-site create-post --title "..." --content "..."
-./wp my-site get-post --id 123
-./wp my-site list-posts --per-page 10
+./wp.sh my-site update-post --id 123 --content "..."
+./wp.sh my-site create-post --title "..." --content "..."
+./wp.sh my-site get-post --id 123
+./wp.sh my-site list-posts --per-page 10
 
 # Group operations (runs on all sites in group)
-./wp all update-post --id 123 --status "publish"
+./wp.sh all update-post --id 123 --status "publish"
 ```
 
 ### Batch Operations
