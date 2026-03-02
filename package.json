@@ -1,5 +1,5 @@
 {
-  "name": "wordpress-api",
+  "name": "wordpress-api-skill",
   "version": "2.0.0",
   "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, and media programmatically with multi-site support",
   "main": "SKILL.md",

@@ -2,7 +2,7 @@
 
 ## 📦 Repository Ready
 
-התיקייה `wordpress-api/` מוכנה להעלאה לגיטהאב.
+התיקייה `wordpress-api-skill/` מוכנה להעלאה לגיטהאב.
 
 **מה נכלל:**
 - ✅ SKILL.md - Skill definition
@@ -30,7 +30,7 @@
 ### שלב 2: חבר את ה-repo המקומי
 
 ```bash
-cd ~/.openclaw/workspace/skills/wordpress-api
+cd ~/.openclaw/workspace/skills/wordpress-api-skill-skill
 
 # הוסף remote
 git remote add origin https://github.com/Digitizers/wordpress-api-skill.git
@@ -61,13 +61,13 @@ git push -u origin main
 
 ```bash
 cd ~/.openclaw/workspace/skills/
-git clone https://github.com/Digitizers/wordpress-api-skill wordpress-api
+git clone https://github.com/Digitizers/wordpress-api-skill wordpress-api-skill
 ```
 
 ### התקנה דרך ClawHub (אחרי פרסום):
 
 ```bash
-clawhub install wordpress-api
+clawhub install wordpress-api-skill
 ```
 
 ---
@@ -88,7 +88,7 @@ clawhub install wordpress-api
 כשתעדכן תוכן:
 
 ```bash
-cd ~/.openclaw/workspace/skills/wordpress-api
+cd ~/.openclaw/workspace/skills/wordpress-api-skill
 git add .
 git commit -m "תיאור השינוי"
 git push
@@ -151,8 +151,8 @@ clawhub login
 
 **ידני:**
 ```bash
-clawhub publish ./skills/wordpress-api \
-  --slug wordpress-api \
+clawhub publish ./skills/wordpress-api-skill \
+  --slug wordpress-api-skill \
   --name "WordPress API" \
   --version 2.0.0 \
   --changelog "Multi-site management + batch operations"
@@ -160,11 +160,11 @@ clawhub publish ./skills/wordpress-api \
 
 ### שלב 3: אישור
 
-✓ Skill מפורסם ב-https://clawhub.com/skills/wordpress-api
+✓ Skill מפורסם ב-https://clawhub.com/skills/wordpress-api-skill
 
 אנשים יכולים להתקין:
 ```bash
-clawhub install wordpress-api
+clawhub install wordpress-api-skill
 ```
 
 ---
