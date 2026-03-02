@@ -1,0 +1,44 @@
+{
+  "name": "wordpress-api",
+  "version": "1.0.0",
+  "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, and media programmatically",
+  "main": "SKILL.md",
+  "keywords": [
+    "openclaw",
+    "openclaw-skill",
+    "wordpress",
+    "rest-api",
+    "gutenberg",
+    "cms",
+    "content-management",
+    "blogging",
+    "publishing"
+  ],
+  "author": "OpenClaw Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/wordpress-api-skill.git"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/wordpress-api-skill#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/wordpress-api-skill/issues"
+  },
+  "engines": {
+    "openclaw": ">=2026.2.0"
+  },
+  "openclaw": {
+    "type": "skill",
+    "category": "integrations",
+    "tags": [
+      "wordpress",
+      "api",
+      "cms",
+      "publishing",
+      "content"
+    ]
+  },
+  "scripts": {
+    "test": "python3 -m pytest tests/" 
+  }
+}

@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""
+Update WordPress post via REST API
+
+Usage:
+    python3 update_post.py --post-id 123 --content "New content" --title "New Title"
+    
+Environment variables:
+    WP_URL - WordPress site URL
+    WP_USERNAME - WordPress username  
+    WP_APP_PASSWORD - Application Password
+"""
+
+import argparse
+import json
+import os
+import sys
+import urllib.request
+import urllib.error
+from base64 import b64encode
+
+def update_post(url, username, password, post_id, **updates):
+    """Update WordPress post via REST API"""
+    
+    # Build API endpoint
+    api_url = f"{url.rstrip('/')}/wp-json/wp/v2/posts/{post_id}"
+    
+    # Prepare auth header
+    credentials = f"{username}:{password}".encode('utf-8')
+    auth_header = b64encode(credentials).decode('ascii')
+    
+    # Build request data
+    data = {}
+    if 'content' in updates and updates['content']:
+        data['content'] = updates['content']
+    if 'title' in updates and updates['title']:
+        data['title'] = updates['title']
+    if 'status' in updates and updates['status']:
+        data['status'] = updates['status']
+    if 'featured_media' in updates and updates['featured_media']:
+        data['featured_media'] = int(updates['featured_media'])
+    if 'meta' in updates and updates['meta']:
+        data['meta'] = updates['meta']
+    
+    if not data:
+        print(json.dumps({"error": "No updates provided"}), file=sys.stderr)
+        sys.exit(1)
+    
+    # Make request
+    request = urllib.request.Request(
+        api_url,
+        data=json.dumps(data).encode('utf-8'),
+        method='POST'
+    )
+    request.add_header('Authorization', f'Basic {auth_header}')
+    request.add_header('Content-Type', 'application/json')
+    
+    try:
+        with urllib.request.urlopen(request) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            print(json.dumps(result, indent=2))
+            return result
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8')
+        try:
+            error_data = json.loads(error_body)
+            print(json.dumps(error_data), file=sys.stderr)
+        except:
+            print(json.dumps({"error": error_body}), file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(json.dumps({"error": str(e)}), file=sys.stderr)
+        sys.exit(1)
+
+def main():
+    parser = argparse.ArgumentParser(description='Update WordPress post')
+    parser.add_argument('--url', default=os.getenv('WP_URL'), help='WordPress site URL')
+    parser.add_argument('--username', default=os.getenv('WP_USERNAME'), help='WordPress username')
+    parser.add_argument('--app-password', default=os.getenv('WP_APP_PASSWORD'), help='Application Password')
+    parser.add_argument('--post-id', required=True, type=int, help='Post ID to update')
+    parser.add_argument('--content', help='Post content (HTML/Gutenberg)')
+    parser.add_argument('--title', help='Post title')
+    parser.add_argument('--status', choices=['publish', 'draft', 'pending', 'private'], help='Post status')
+    parser.add_argument('--featured-media', type=int, help='Featured image ID')
+    parser.add_argument('--content-file', help='Read content from file')
+    
+    args = parser.parse_args()
+    
+    # Validate required args
+    if not args.url:
+        print(json.dumps({"error": "WordPress URL required (--url or WP_URL)"}), file=sys.stderr)
+        sys.exit(1)
+    if not args.username:
+        print(json.dumps({"error": "Username required (--username or WP_USERNAME)"}), file=sys.stderr)
+        sys.exit(1)
+    if not args.app_password:
+        print(json.dumps({"error": "App password required (--app-password or WP_APP_PASSWORD)"}), file=sys.stderr)
+        sys.exit(1)
+    
+    # Read content from file if specified
+    content = args.content
+    if args.content_file:
+        try:
+            with open(args.content_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except Exception as e:
+            print(json.dumps({"error": f"Failed to read content file: {e}"}), file=sys.stderr)
+            sys.exit(1)
+    
+    # Update post
+    update_post(
+        url=args.url,
+        username=args.username,
+        password=args.app_password,
+        post_id=args.post_id,
+        content=content,
+        title=args.title,
+        status=args.status,
+        featured_media=args.featured_media
+    )
+
+if __name__ == '__main__':
+    main()

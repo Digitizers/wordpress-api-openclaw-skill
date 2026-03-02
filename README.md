@@ -1,0 +1,125 @@
+# WordPress API - OpenClaw Skill
+
+WordPress REST API integration skill for OpenClaw. Manage posts, pages, media, and more programmatically.
+
+## Features
+
+- ✅ **Full CRUD** - Create, read, update, delete posts/pages
+- ✅ **Gutenberg Support** - Native block format
+- ✅ **Secure Auth** - Application Passwords (recommended)
+- ✅ **Media Management** - Upload and manage media files
+- ✅ **Batch Operations** - List, filter, and bulk actions
+- ✅ **Zero Dependencies** - Pure Python stdlib
+
+## Installation
+
+### Via ClawHub (Recommended)
+
+```bash
+clawhub install wordpress-api
+```
+
+### Manual Installation
+
+```bash
+cd ~/.openclaw/workspace/skills/
+git clone https://github.com/YOUR_USERNAME/wordpress-api-skill wordpress-api
+```
+
+## Quick Start
+
+### 1. Create Application Password
+
+1. Go to: `https://yoursite.com/wp-admin/profile.php`
+2. Scroll to "Application Passwords"
+3. Name: "OpenClaw API"
+4. Click "Add New Application Password"
+5. Copy the password
+
+### 2. Set Environment Variables
+
+```bash
+export WP_URL="https://yoursite.com"
+export WP_USERNAME="your-username"
+export WP_APP_PASSWORD="xxxx xxxx xxxx xxxx xxxx xxxx"
+```
+
+### 3. Use the Skill
+
+**Update a post:**
+```bash
+python3 ~/.openclaw/workspace/skills/wordpress-api/scripts/update_post.py \
+  --post-id 123 \
+  --title "New Title" \
+  --content "Updated content" \
+  --status "publish"
+```
+
+**Create a post:**
+```bash
+python3 scripts/create_post.py \
+  --title "My Post" \
+  --content "Post content here" \
+  --status "draft"
+```
+
+**Get a post:**
+```bash
+python3 scripts/get_post.py --post-id 123
+```
+
+**List posts:**
+```bash
+python3 scripts/list_posts.py --per-page 10 --status "publish"
+```
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `update_post.py` | Update existing post |
+| `create_post.py` | Create new post |
+| `get_post.py` | Retrieve single post |
+| `list_posts.py` | List/filter posts |
+
+## Documentation
+
+- **SKILL.md** - Full skill documentation
+- **references/api-reference.md** - WordPress REST API reference
+- **references/gutenberg-blocks.md** - Gutenberg block format guide
+
+## Requirements
+
+- Python 3.6+
+- WordPress 4.7+ (REST API built-in)
+- Application Passwords (WordPress 5.6+ or plugin for older versions)
+
+## Security
+
+- ✅ Use Application Passwords (not regular passwords)
+- ✅ Always use HTTPS
+- ✅ Store credentials in environment variables
+- ❌ Never commit credentials to git
+
+## Use Cases
+
+- Publishing blog posts
+- Content migration
+- Batch updates
+- Automated publishing
+- Content management workflows
+- Integration with other systems
+
+## License
+
+MIT License - See [LICENSE](LICENSE)
+
+## Links
+
+- **OpenClaw:** https://openclaw.ai
+- **ClawHub:** https://clawhub.com
+- **WordPress REST API:** https://developer.wordpress.org/rest-api/
+
+---
+
+Built with ❤️ for OpenClaw
