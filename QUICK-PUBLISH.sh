@@ -3,6 +3,8 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "📦 Publishing wordpress-api to ClawHub..."
 echo ""
 
@@ -16,10 +18,8 @@ fi
 echo "✓ Logged in to ClawHub"
 echo ""
 
-# Publish
-cd ~/.openclaw/workspace
-
-clawhub publish ./skills/wordpress-api \
+# Publish from current directory
+clawhub publish "$SCRIPT_DIR" \
   --slug wordpress-api \
   --name "WordPress API" \
   --version 2.0.0 \
