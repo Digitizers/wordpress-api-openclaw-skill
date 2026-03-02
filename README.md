@@ -160,7 +160,7 @@ python3 scripts/list_posts.py --per-page 10 --status "publish"
 
 ## License
 
-MIT License - See [LICENSE](LICENSE)
+MIT License - See [LICENSE.txt](LICENSE.txt)
 
 ## Links
 
