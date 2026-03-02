@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0] - 2026-03-02
+
+### Security
+- **BREAKING:** Fixed credential exposure vulnerability
+- CLI wrapper now passes credentials via environment variables instead of command-line arguments
+- Credentials no longer visible in `ps` output
+- Added SECURITY.md documentation
+
+### Added
+- Direct env var mode: use WP_URL/WP_USERNAME/WP_APP_PASSWORD without config file
+- Environment-based credential passing (subprocess env parameter)
+
+### Changed
+- `wp_cli.py` refactored to prioritize env vars over config file
+- Config file now optional (fallback for multi-site management)
+- Backward compatible with existing config files
+
 ## [2.0.1] - 2026-03-02
 
 ### Changed
