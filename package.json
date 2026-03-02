@@ -23,11 +23,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benkalsky/wordpress-api-skill.git"
+    "url": "https://github.com/Digitizers/wordpress-api-skill.git"
   },
-  "homepage": "https://github.com/benkalsky/wordpress-api-skill#readme",
+  "homepage": "https://github.com/Digitizers/wordpress-api-skill#readme",
   "bugs": {
-    "url": "https://github.com/benkalsky/wordpress-api-skill/issues"
+    "url": "https://github.com/Digitizers/wordpress-api-skill/issues"
   },
   "engines": {
     "openclaw": ">=2026.2.0"

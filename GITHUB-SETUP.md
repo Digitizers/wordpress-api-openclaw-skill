@@ -32,8 +32,8 @@
 ```bash
 cd ~/.openclaw/workspace/skills/wordpress-api
 
-# הוסף remote (החלף YOUR_USERNAME בשם המשתמש שלך)
-git remote add origin https://github.com/YOUR_USERNAME/wordpress-api-skill.git
+# הוסף remote
+git remote add origin https://github.com/Digitizers/wordpress-api-skill.git
 
 # שנה את שם ה-branch ל-main
 git branch -M main
@@ -61,7 +61,7 @@ git push -u origin main
 
 ```bash
 cd ~/.openclaw/workspace/skills/
-git clone https://github.com/YOUR_USERNAME/wordpress-api-skill wordpress-api
+git clone https://github.com/Digitizers/wordpress-api-skill wordpress-api
 ```
 
 ### התקנה דרך ClawHub (אחרי פרסום):
