@@ -196,4 +196,4 @@ MIT License - See [LICENSE.txt](LICENSE.txt)
 
 ---
 
-Built with ❤️ for [OpenClaw](https://openclaw.ai) by [Digitizer](https://digitizer.co.il)
+Built with ❤️ for OpenClaw by [Digitizer](https://www.digitizer.studio)
