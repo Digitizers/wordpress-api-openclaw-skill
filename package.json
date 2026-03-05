@@ -1,6 +1,6 @@
 {
   "name": "wordpress-api",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, and media programmatically with multi-site support",
   "main": "SKILL.md",
   "keywords": [
@@ -23,11 +23,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Digitizers/wordpress-api.git"
+    "url": "https://github.com/Digitizers/wordpress-api-openclaw-skill.git"
   },
-  "homepage": "https://github.com/Digitizers/wordpress-api#readme",
+  "homepage": "https://github.com/Digitizers/wordpress-api-openclaw-skill#readme",
   "bugs": {
-    "url": "https://github.com/Digitizers/wordpress-api/issues"
+    "url": "https://github.com/Digitizers/wordpress-api-openclaw-skill/issues"
   },
   "engines": {
     "openclaw": ">=2026.2.0"

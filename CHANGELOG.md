@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0] - 2026-03-05
+
+### Added
+- **Plugin support:** ACF, JetEngine, Rank Math SEO, Yoast SEO
+- `scripts/detect_plugins.py` - Auto-detect installed WordPress plugins
+- `scripts/acf_fields.py` - Read/write ACF (Advanced Custom Fields) with REST API + postmeta fallback
+- `scripts/seo_meta.py` - Read/write Rank Math and Yoast SEO meta fields with auto-detection
+- `scripts/jetengine_fields.py` - Read/write JetEngine custom fields via postmeta
+- Support for both `WP_SITE_URL` and `WP_URL` environment variables (backward compatible)
+- Support for both `WP_USER` and `WP_USERNAME` environment variables
+
+### Changed
+- All new scripts use `requests` library for better error handling and cleaner code
+- Improved error messages with structured JSON output
+- Enhanced documentation in SKILL.md with plugin integration examples
+
 ## [3.0.0] - 2026-03-02
 
 ### Security

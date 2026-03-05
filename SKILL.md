@@ -196,6 +196,84 @@ python3 scripts/list_posts.py --per-page 10 --status "publish"
 - `--status STATUS` - Filter by status (publish, draft, pending, private)
 - `--author ID` - Filter by author
 
+## Plugin Integration
+
+### Detect Plugins
+
+Automatically detect installed WordPress plugins (ACF, Rank Math, Yoast, JetEngine):
+
+```bash
+python3 scripts/detect_plugins.py
+python3 scripts/detect_plugins.py --verbose
+```
+
+### ACF (Advanced Custom Fields)
+
+Read and write ACF fields with automatic fallback to postmeta:
+
+```bash
+# Get all ACF fields
+python3 scripts/acf_fields.py --post-id 123
+
+# Get specific field
+python3 scripts/acf_fields.py --post-id 123 --field my_field
+
+# Set fields from JSON
+python3 scripts/acf_fields.py --post-id 123 --set '{"field1": "value1", "field2": "value2"}'
+
+# Set single field
+python3 scripts/acf_fields.py --post-id 123 --field my_field --value "my value"
+```
+
+**Features:**
+- Automatic REST API detection with postmeta fallback
+- Support for simple, repeater, and group fields
+- JSON input/output for complex field structures
+
+### SEO Meta (Rank Math & Yoast)
+
+Read and write SEO meta fields with auto-detection:
+
+```bash
+# Auto-detect plugin and get meta
+python3 scripts/seo_meta.py --post-id 123
+
+# Detect which SEO plugin is active
+python3 scripts/seo_meta.py --post-id 123 --detect
+
+# Get specific plugin's meta
+python3 scripts/seo_meta.py --post-id 123 --plugin rankmath
+python3 scripts/seo_meta.py --post-id 123 --plugin yoast
+
+# Set SEO meta
+python3 scripts/seo_meta.py --post-id 123 --set '{"title": "SEO Title", "description": "Meta description"}'
+
+# Set with specific plugin
+python3 scripts/seo_meta.py --post-id 123 --plugin rankmath --set '{"focus_keyword": "keyword"}'
+```
+
+**Supported fields:**
+- **Rank Math:** title, description, focus_keyword, robots, canonical_url, schema
+- **Yoast:** title, description, focus_keyword, canonical, meta_robots_noindex, meta_robots_nofollow
+
+### JetEngine Fields
+
+Read and write JetEngine custom fields (stored as postmeta):
+
+```bash
+# Get all JetEngine fields
+python3 scripts/jetengine_fields.py --post-id 123
+
+# Get specific field
+python3 scripts/jetengine_fields.py --post-id 123 --field my_field
+
+# Set fields from JSON
+python3 scripts/jetengine_fields.py --post-id 123 --set '{"field1": "value1", "field2": "value2"}'
+
+# Set single field
+python3 scripts/jetengine_fields.py --post-id 123 --field my_field --value "my value"
+```
+
 ## Gutenberg Blocks
 
 WordPress uses Gutenberg block format for content. See [references/gutenberg-blocks.md](references/gutenberg-blocks.md) for details.

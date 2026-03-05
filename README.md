@@ -9,7 +9,8 @@ WordPress REST API integration skill for OpenClaw. Manage posts, pages, media, a
 - ✅ **Secure Auth** - Application Passwords (recommended)
 - ✅ **Media Management** - Upload and manage media files
 - ✅ **Batch Operations** - List, filter, and bulk actions
-- ✅ **Zero Dependencies** - Pure Python stdlib
+- ✅ **Plugin Support** - ACF, JetEngine, Rank Math, Yoast SEO
+- ✅ **Minimal Dependencies** - Core scripts use stdlib, plugin scripts use requests
 
 ## Installation
 
@@ -23,7 +24,7 @@ clawhub install wordpress-api
 
 ```bash
 cd ~/.openclaw/workspace/skills/
-git clone https://github.com/Digitizers/wordpress-api wordpress-api
+git clone https://github.com/Digitizers/wordpress-api-openclaw-skill wordpress-api
 ```
 
 ## Quick Start
@@ -123,12 +124,36 @@ python3 scripts/list_posts.py --per-page 10 --status "publish"
 
 ## Scripts
 
+### Core Scripts
 | Script | Purpose |
 |--------|---------|
 | `update_post.py` | Update existing post |
 | `create_post.py` | Create new post |
 | `get_post.py` | Retrieve single post |
 | `list_posts.py` | List/filter posts |
+
+### Plugin Integration (New in v3.1.0)
+| Script | Purpose |
+|--------|---------|
+| `detect_plugins.py` | Auto-detect installed plugins (ACF, Rank Math, Yoast, JetEngine) |
+| `acf_fields.py` | Read/write Advanced Custom Fields |
+| `seo_meta.py` | Read/write Rank Math & Yoast SEO meta |
+| `jetengine_fields.py` | Read/write JetEngine custom fields |
+
+**Examples:**
+```bash
+# Detect plugins
+python3 scripts/detect_plugins.py
+
+# Get ACF fields
+python3 scripts/acf_fields.py --post-id 123
+
+# Set SEO meta
+python3 scripts/seo_meta.py --post-id 123 --set '{"title": "SEO Title", "description": "Meta desc"}'
+
+# Update JetEngine field
+python3 scripts/jetengine_fields.py --post-id 123 --field my_field --value "value"
+```
 
 ## Documentation
 
@@ -141,6 +166,7 @@ python3 scripts/list_posts.py --per-page 10 --status "publish"
 - Python 3.6+
 - WordPress 4.7+ (REST API built-in)
 - Application Passwords (WordPress 5.6+ or plugin for older versions)
+- `requests` library (for plugin integration scripts): `pip install requests`
 
 ## Security
 
@@ -170,4 +196,4 @@ MIT License - See [LICENSE.txt](LICENSE.txt)
 
 ---
 
-Built with ❤️ for OpenClaw
+Built with ❤️ for [OpenClaw](https://openclaw.ai) by [Digitizer](https://digitizer.co.il)
