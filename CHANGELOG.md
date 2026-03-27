@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.2.0] - 2026-03-28
+
+### Added
+- **Elementor content support** - `scripts/elementor_content.py`
+  - Get Elementor page data via `_elementor_data` meta field
+  - Update Elementor widgets (headings, text, buttons)
+  - Recursive widget search by ID
+  - Supports nested element structures
+- **Media upload** - `scripts/upload_media.py`
+  - Upload images from local files or URLs
+  - Set title, alt text, and caption
+  - Auto-detect MIME types
+  - Set as featured image with `--set-featured`
+  - Multipart form-data upload support
+- **WooCommerce products** - `scripts/woo_products.py`
+  - List, get, create, and update WooCommerce products
+  - Consumer Key/Secret authentication
+  - Support for price, status, SKU, stock management
+  - WooCommerce REST API v3 integration
+
+### Documentation
+- Added Elementor, Media Upload, and WooCommerce sections to SKILL.md
+- Documented all authentication methods and environment variables
+- Added usage examples for all new features
+
 ## [3.1.0] - 2026-03-05
 
 ### Added

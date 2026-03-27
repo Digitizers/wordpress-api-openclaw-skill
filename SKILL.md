@@ -274,6 +274,119 @@ python3 scripts/jetengine_fields.py --post-id 123 --set '{"field1": "value1", "f
 python3 scripts/jetengine_fields.py --post-id 123 --field my_field --value "my value"
 ```
 
+## Elementor Content
+
+Manage Elementor page builder content via `_elementor_data` meta field:
+
+```bash
+# Get Elementor data for a page
+python3 scripts/elementor_content.py --post-id 123 --action get
+
+# Update specific widget content
+python3 scripts/elementor_content.py \
+  --post-id 123 \
+  --action update \
+  --widget-id "abc123" \
+  --content "New heading text"
+```
+
+**Supported widget types:**
+- Headings (`heading`)
+- Text Editor (`text-editor`)
+- Buttons (`button`)
+- Generic fallback for other widgets
+
+**How it works:**
+- Gets page data with `_elementor_data` meta field
+- Parses JSON structure
+- Finds widget by ID (recursively through nested elements)
+- Updates content based on widget type
+- Saves back to WordPress
+
+## Media Upload
+
+Upload images and files to WordPress media library:
+
+```bash
+# Upload local file
+python3 scripts/upload_media.py \
+  --file "/path/to/image.jpg" \
+  --title "My Image" \
+  --alt-text "Description for accessibility"
+
+# Upload from URL
+python3 scripts/upload_media.py \
+  --file "https://example.com/image.jpg" \
+  --title "Remote Image"
+
+# Upload and set as featured image
+python3 scripts/upload_media.py \
+  --file "image.jpg" \
+  --set-featured \
+  --post-id 123
+```
+
+**Features:**
+- Supports local files and URLs
+- Auto-detects MIME type
+- Returns media ID for further operations
+- Can set as featured image in one call
+
+## WooCommerce Products
+
+Manage WooCommerce products via REST API v3:
+
+```bash
+# List products
+python3 scripts/woo_products.py \
+  --consumer-key "ck_..." \
+  --consumer-secret "cs_..." \
+  --action list \
+  --per-page 10
+
+# Get single product
+python3 scripts/woo_products.py \
+  --consumer-key "ck_..." \
+  --consumer-secret "cs_..." \
+  --action get \
+  --product-id 456
+
+# Create product
+python3 scripts/woo_products.py \
+  --consumer-key "ck_..." \
+  --consumer-secret "cs_..." \
+  --action create \
+  --title "New Product" \
+  --price "29.99" \
+  --description "Product description" \
+  --status "publish"
+
+# Update product
+python3 scripts/woo_products.py \
+  --consumer-key "ck_..." \
+  --consumer-secret "cs_..." \
+  --action update \
+  --product-id 456 \
+  --price "39.99" \
+  --status "publish"
+```
+
+**Authentication:**
+- Requires WooCommerce Consumer Key and Consumer Secret
+- Get from: WooCommerce → Settings → Advanced → REST API
+- Environment variables: `WC_CONSUMER_KEY`, `WC_CONSUMER_SECRET`
+
+**Supported fields:**
+- `--title` / `--name` - Product name
+- `--price` - Regular price
+- `--sale-price` - Sale price
+- `--description` - Full description
+- `--short-description` - Short description
+- `--status` - publish, draft, pending, private
+- `--sku` - Stock keeping unit
+- `--stock-quantity` - Stock amount
+- `--manage-stock` - Enable stock management
+
 ## Gutenberg Blocks
 
 WordPress uses Gutenberg block format for content. See [references/gutenberg-blocks.md](references/gutenberg-blocks.md) for details.
