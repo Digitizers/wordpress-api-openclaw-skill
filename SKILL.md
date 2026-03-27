@@ -1,5 +1,5 @@
 ---
-name: wordpress-api
+name: wordpress-api-pro
 description: |
   WordPress REST API integration for managing posts, pages, media, and more on self-hosted WordPress sites.
   Use when you need to create, update, or retrieve WordPress content programmatically.
