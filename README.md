@@ -36,7 +36,7 @@ git clone https://github.com/Digitizers/wordpress-api-pro wordpress-api
 
 **1. Copy config template:**
 ```bash
-cd ~/.openclaw/workspace/skills/wordpress-api
+cd ~/.openclaw/workspace/skills/wordpress-api-pro
 cp config/sites.example.json config/sites.json
 ```
 
@@ -100,7 +100,7 @@ export WP_APP_PASSWORD="xxxx xxxx xxxx xxxx xxxx xxxx"
 
 **Update a post:**
 ```bash
-python3 ~/.openclaw/workspace/skills/wordpress-api/scripts/update_post.py \
+python3 ~/.openclaw/workspace/skills/wordpress-api-pro/scripts/update_post.py \
   --post-id 123 \
   --title "New Title" \
   --content "Updated content" \

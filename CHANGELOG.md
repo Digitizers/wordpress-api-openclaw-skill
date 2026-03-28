@@ -61,7 +61,7 @@
 ## [2.0.1] - 2026-03-02
 
 ### Changed
-- Renamed slug from `wordpress-api-skill` to `wordpress-api` (cleaner, follows package manager conventions)
+- Renamed slug to `wordpress-api-pro` (cleaner, follows package manager conventions)
 - Updated all documentation to use shorter slug
 - Updated GitHub repository URL
 
