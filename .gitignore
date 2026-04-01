@@ -1,0 +1,15 @@
+# Credentials and site configuration
+config/sites.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
