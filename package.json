@@ -1,6 +1,6 @@
 {
   "name": "wordpress-api-pro",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, and media programmatically with multi-site support",
   "main": "SKILL.md",
   "keywords": [
