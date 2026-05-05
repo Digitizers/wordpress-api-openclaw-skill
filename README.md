@@ -1,21 +1,25 @@
-# wordpress-api-pro
+# WordPress API Pro — OpenClaw Skill
 
 [![CI](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml)
 
-OpenClaw WordPress API Pro skill repository. Manage WordPress posts, pages, media, WooCommerce, Elementor, SEO meta, ACF, and JetEngine fields programmatically — with explicit safety boundaries for agentic use.
+WordPress REST API integration skill for OpenClaw. Manage posts, pages, media, WooCommerce products, Elementor content, SEO metadata, ACF, JetEngine fields, and multi-site workflows programmatically — with explicit safety boundaries for agentic use.
 
 ## Features
 
-- ✅ **Full CRUD** — create, read, update, and delete WordPress posts/pages.
-- ✅ **Gutenberg support** — work with native block content safely.
-- ✅ **Elementor content** — read and update Elementor `_elementor_data` content.
-- ✅ **Media upload** — upload local media or explicitly approved HTTPS remote media.
-- ✅ **WooCommerce products** — manage product data through the REST API.
-- ✅ **Plugin fields** — ACF, JetEngine, Rank Math, and Yoast SEO helpers.
-- ✅ **Multi-site workflows** — site config, groups, and wrapper commands via `wp.sh`.
-- ✅ **Dry-run-first batch operations** — preview bulk changes before execution.
-- ✅ **Safety gates** — protected local file reads, remote URL checks, and explicit live-write flags.
-- ✅ **CI verified** — Python 3.11/3.12/3.13 smoke tests and package validation.
+- ✅ **Elementor Content** — read and update Elementor page content via `_elementor_data`.
+- ✅ **Media Upload** — upload images/files to the WordPress media library.
+- ✅ **WooCommerce Products** — list, create, read, and update WooCommerce products.
+- ✅ **Full CRUD** — create, read, update, and delete posts/pages.
+- ✅ **Gutenberg Support** — native block format and content workflows.
+- ✅ **Secure Auth** — WordPress Application Passwords recommended.
+- ✅ **Media Management** — local media upload plus explicit opt-in remote HTTPS media.
+- ✅ **Batch Operations** — list, filter, dry-run, and bulk update content.
+- ✅ **Multi-Site Workflows** — manage named sites and site groups with `wp.sh`.
+- ✅ **Plugin Support** — ACF, JetEngine, Rank Math, and Yoast SEO helpers.
+- ✅ **Safety Gates** — dry-run defaults, explicit live-write flags, protected local file reads, and private-network URL blocking.
+- ✅ **CI Verified** — tested on Python 3.11, 3.12, and 3.13.
+
+## Package Layout
 
 The actual skill payload lives in:
 
@@ -25,140 +29,153 @@ wordpress-api-pro/
 
 Repository-only files such as this README, changelog, license, CI, and package metadata intentionally stay outside the skill directory.
 
+ClawHub package directory: `wordpress-api-pro/`.
+
 ## Version
 
 Current version: **3.4.0**
 
-## Install
+## Installation
+
+### Via OpenClaw / ClawHub
 
 ```bash
 openclaw skills install wordpress-api-pro
 ```
 
-Manual install from this repository:
+### Manual Installation
 
 ```bash
 cp -R wordpress-api-pro ~/.openclaw/workspace/skills/wordpress-api-pro
 ```
 
-ClawHub package directory: `wordpress-api-pro/`.
+## Quick Start
 
-## Security model
+### Option A: Multi-Site Setup — recommended for 2+ sites ⭐
 
-- Use a dedicated least-privilege WordPress API user.
-- Prefer environment variables for credentials.
-- Keep `config/sites.json` local, untracked, and `chmod 600`.
-- Batch operations are dry-run by default and require `--execute` for live changes.
-- Group operations through `wp.sh` require `--execute-group`.
-- Targeting a group named `all` requires `--allow-all`.
-- Local file reads are restricted to the current working directory by default. Use `WP_ALLOWED_FILE_ROOTS` to approve another directory.
-- Remote media downloads require `--allow-remote-url` or `WP_ALLOW_REMOTE_URLS=1`, allow HTTPS only, and block private/local network hosts.
-
-## Authentication
+**1. Copy config template:**
 
 ```bash
-export WP_URL="https://example.com"
+cd ~/.openclaw/workspace/skills/wordpress-api-pro
+cp config/sites.example.json config/sites.json
+chmod 600 config/sites.json
+```
+
+**2. Edit `config/sites.json`:**
+
+```json
+{
+  "sites": {
+    "client-main": {
+      "url": "https://example.com",
+      "username": "wp-api-user",
+      "app_password": "",
+      "description": "Primary client site"
+    },
+    "client-shop": {
+      "url": "https://shop.example.com",
+      "username": "wp-api-user",
+      "app_password": "",
+      "description": "WooCommerce shop"
+    }
+  },
+  "groups": {
+    "client": ["client-main", "client-shop"]
+  }
+}
+```
+
+Keep real credentials local only. Do not commit `config/sites.json`.
+
+**3. Use the CLI wrapper:**
+
+```bash
+# List configured sites
+./wp.sh --list-sites
+
+# Read a post on a specific site
+./wp.sh client-main get-post --id 123
+
+# Update a post after approval
+./wp.sh client-main update-post --id 123 --status draft
+
+# Group operation requires explicit group execution flag
+./wp.sh client --execute-group update-post --id 456 --status draft
+```
+
+### Option B: Single Site Setup
+
+**1. Create an Application Password**
+
+1. Open `https://your-site.example/wp-admin/profile.php`.
+2. Scroll to **Application Passwords**.
+3. Create a password for a dedicated API user.
+4. Copy it once and store it in a secret manager or environment variable.
+
+**2. Set environment variables**
+
+```bash
+export WP_URL="https://your-site.example"
 export WP_USERNAME="wp-api-user"
 read -rs WP_APP_PASSWORD
 export WP_APP_PASSWORD
 ```
 
-## Quick examples
-
-Read/list:
+**3. Use the scripts**
 
 ```bash
 cd wordpress-api-pro
+```
+
+**Update a post:**
+
+```bash
+python3 scripts/update_post.py \
+  --post-id 123 \
+  --title "New Title" \
+  --content "Updated content" \
+  --status draft
+```
+
+**Create a draft:**
+
+```bash
+python3 scripts/create_post.py \
+  --title "My Post" \
+  --content "Post content here" \
+  --status draft
+```
+
+**Get a post:**
+
+```bash
 python3 scripts/get_post.py --post-id 123
+```
+
+**List posts:**
+
+```bash
 python3 scripts/list_posts.py --per-page 10 --status publish
 ```
 
-Create a draft:
+## Batch Operations
 
-```bash
-cd wordpress-api-pro
-python3 scripts/create_post.py \
-  --title "Draft title" \
-  --content "Draft content" \
-  --status draft
-```
-
-Update a post after approval:
-
-```bash
-cd wordpress-api-pro
-python3 scripts/update_post.py \
-  --post-id 123 \
-  --content "Approved content" \
-  --status draft
-```
-
-Upload local media:
-
-```bash
-cd wordpress-api-pro
-python3 scripts/upload_media.py --file ./media/image.jpg --title "Image title"
-```
-
-Upload remote media with explicit opt-in:
-
-```bash
-cd wordpress-api-pro
-python3 scripts/upload_media.py \
-  --file https://cdn.example.com/image.jpg \
-  --allow-remote-url \
-  --title "Image title"
-```
-
-## Multi-site setup
-
-```bash
-cd wordpress-api-pro
-cp config/sites.example.json config/sites.json
-chmod 600 config/sites.json
-```
-
-`config/sites.example.json` intentionally contains no credentials.
-
-```bash
-cd wordpress-api-pro
-./wp.sh --list-sites
-./wp.sh sample-site get-post --id 123
-./wp.sh sample-site update-post --id 123 --status draft
-```
-
-Group operation:
-
-```bash
-cd wordpress-api-pro
-./wp.sh sample --execute-group update-post --id 123 --status draft
-```
-
-All-sites group operation, only after explicit approval:
-
-```bash
-cd wordpress-api-pro
-./wp.sh all --execute-group --allow-all update-post --id 123 --status draft
-```
-
-## Batch operations
-
-Dry-run preview:
+Dry-run preview is the default:
 
 ```bash
 cd wordpress-api-pro
 python3 scripts/batch_update.py \
-  --group sample \
+  --group client \
   --post-ids 123,456 \
   --status draft
 ```
 
-Apply after review:
+Apply only after review:
 
 ```bash
 cd wordpress-api-pro
 python3 scripts/batch_update.py \
-  --group sample \
+  --group client \
   --post-ids 123,456 \
   --status draft \
   --execute
@@ -166,19 +183,119 @@ python3 scripts/batch_update.py \
 
 ## Scripts
 
-- `update_post.py` — update an existing post.
-- `create_post.py` — create a post/page.
-- `get_post.py` — retrieve one post.
-- `list_posts.py` — list/filter posts.
-- `batch_update.py` — safe dry-run-first batch updates.
-- `upload_media.py` — upload local or explicitly approved remote media.
-- `detect_plugins.py` — detect supported WordPress plugins.
-- `acf_fields.py` — read/write ACF fields.
-- `seo_meta.py` — read/write Rank Math and Yoast SEO meta.
-- `jetengine_fields.py` — read/write JetEngine custom fields.
-- `elementor_content.py` — read/update Elementor content.
-- `woo_products.py` — manage WooCommerce products.
-- `security.py` — local file/remote URL safety helpers.
+### Core Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `update_post.py` | Update an existing post/page |
+| `create_post.py` | Create a new post/page |
+| `get_post.py` | Retrieve a single post/page |
+| `list_posts.py` | List and filter posts/pages |
+| `batch_update.py` | Dry-run-first batch updates across sites/groups |
+| `wp_cli.py` | Multi-site command wrapper backend |
+| `security.py` | Local file and remote URL safety helpers |
+
+### Plugin & Commerce Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `detect_plugins.py` | Auto-detect supported plugins — ACF, Rank Math, Yoast, JetEngine, WooCommerce |
+| `acf_fields.py` | Read/write Advanced Custom Fields |
+| `seo_meta.py` | Read/write Rank Math and Yoast SEO meta |
+| `jetengine_fields.py` | Read/write JetEngine custom fields |
+| `elementor_content.py` | Read/update Elementor page content |
+| `upload_media.py` | Upload local or explicitly approved remote media |
+| `woo_products.py` | Manage WooCommerce products |
+
+## Examples
+
+**Detect supported plugins:**
+
+```bash
+python3 scripts/detect_plugins.py
+```
+
+**Get ACF fields:**
+
+```bash
+python3 scripts/acf_fields.py --post-id 123
+```
+
+**Set SEO meta:**
+
+```bash
+python3 scripts/seo_meta.py \
+  --post-id 123 \
+  --set '{"title":"SEO Title","description":"Meta description"}'
+```
+
+**Update JetEngine field:**
+
+```bash
+python3 scripts/jetengine_fields.py \
+  --post-id 123 \
+  --field my_field \
+  --value "New value"
+```
+
+**Elementor content:**
+
+```bash
+python3 scripts/elementor_content.py get \
+  --post-id 123 \
+  --widget-id some_widget_id
+
+python3 scripts/elementor_content.py update \
+  --post-id 123 \
+  --widget-id some_widget_id \
+  --field title \
+  --value "New Title"
+```
+
+**Media upload:**
+
+```bash
+python3 scripts/upload_media.py \
+  --file ./media/image.jpg \
+  --title "My Image" \
+  --caption "A beautiful image"
+```
+
+Remote media requires explicit opt-in:
+
+```bash
+python3 scripts/upload_media.py \
+  --file https://cdn.example.com/image.png \
+  --allow-remote-url \
+  --set-featured \
+  --post-id 123
+```
+
+**WooCommerce products:**
+
+```bash
+python3 scripts/woo_products.py list --status publish
+python3 scripts/woo_products.py get --id 456
+python3 scripts/woo_products.py create --name "New Product" --type simple --regular-price 29.99
+python3 scripts/woo_products.py update --id 456 --description "Updated product description"
+```
+
+## Safety Model
+
+- ✅ Use Application Passwords, not regular account passwords.
+- ✅ Prefer a dedicated least-privilege WordPress API user.
+- ✅ Always use HTTPS for production sites.
+- ✅ Store credentials in environment variables or local untracked config.
+- ✅ Keep `config/sites.json` local, untracked, and `chmod 600`.
+- ✅ Review dry-runs before live batch updates.
+- ❌ Never commit credentials to git.
+- ❌ Never publish or update live content without explicit approval.
+
+## Documentation
+
+- **`wordpress-api-pro/SKILL.md`** — full skill instructions for OpenClaw agents.
+- **`wordpress-api-pro/references/api-reference.md`** — WordPress REST API reference.
+- **`wordpress-api-pro/references/gutenberg-blocks.md`** — Gutenberg block format guide.
 
 ## Requirements
 
@@ -186,8 +303,30 @@ python3 scripts/batch_update.py \
 - WordPress 5.6+ recommended for built-in Application Passwords
 - `requests` for plugin integration scripts: `pip install requests`
 
+## Use Cases
+
+- Publishing and drafting blog posts.
+- Content migration between WordPress sites.
+- Batch updates across many posts or client sites.
+- Automated content workflows with approval gates.
+- WooCommerce product maintenance.
+- Elementor landing page updates.
+- SEO metadata operations.
+- Agency multi-site operations.
+- Integration with OpenClaw / agentic workflows.
+
 ## Links
 
-- Repository: https://github.com/Digitizers/wordpress-api-pro
-- ClawHub: https://clawhub.ai/benkalsky/wordpress-api-pro
-- WordPress REST API: https://developer.wordpress.org/rest-api/
+- **Repository:** https://github.com/Digitizers/wordpress-api-pro
+- **ClawHub:** https://clawhub.ai/benkalsky/wordpress-api-pro
+- **OpenClaw:** https://openclaw.ai
+- **WordPress REST API:** https://developer.wordpress.org/rest-api/
+- **Digitizer:** https://www.digitizer.studio
+
+## License
+
+MIT-0 — see [LICENSE.txt](LICENSE.txt)
+
+---
+
+Built with ❤️ for OpenClaw by [Digitizer](https://www.digitizer.studio)
