@@ -1,5 +1,7 @@
 # wordpress-api-pro
 
+[![CI](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml)
+
 OpenClaw WordPress API Pro skill repository.
 
 The publishable skill lives in:
