@@ -1,5 +1,6 @@
 # Credentials and site configuration
 config/sites.json
+wordpress-api-pro/config/sites.json
 
 # Python
 __pycache__/
@@ -9,6 +10,12 @@ __pycache__/
 # Environment
 .env
 .env.*
+
+# Build artifacts
+*.zip
+*.tar.gz
+dist/
+build/
 
 # OS
 .DS_Store

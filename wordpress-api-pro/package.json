@@ -1,0 +1,62 @@
+{
+  "name": "wordpress-api-pro",
+  "version": "3.4.0",
+  "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, media, WooCommerce, Elementor, and metadata with explicit safety boundaries",
+  "main": "SKILL.md",
+  "keywords": [
+    "openclaw",
+    "openclaw-skill",
+    "wordpress",
+    "rest-api",
+    "gutenberg",
+    "cms",
+    "content-management",
+    "publishing",
+    "multi-site",
+    "batch-operations",
+    "woocommerce",
+    "elementor"
+  ],
+  "author": "Ben Kalsky <ben@digitizer.co.il> (https://digitizer.co.il)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Digitizers/wordpress-api-pro.git",
+    "directory": "wordpress-api-pro"
+  },
+  "homepage": "https://github.com/Digitizers/wordpress-api-pro/tree/main/wordpress-api-pro#readme",
+  "bugs": {
+    "url": "https://github.com/Digitizers/wordpress-api-pro/issues"
+  },
+  "engines": {
+    "openclaw": ">=2026.2.0"
+  },
+  "openclaw": {
+    "type": "skill",
+    "category": "integrations",
+    "tags": [
+      "wordpress",
+      "api",
+      "cms",
+      "publishing",
+      "content",
+      "multi-site",
+      "batch",
+      "woocommerce",
+      "elementor"
+    ]
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.txt",
+    "config/sites.example.json",
+    "references/**/*.md",
+    "scripts/**/*.py",
+    "wp.sh"
+  ],
+  "scripts": {
+    "test": "python3 -m compileall scripts && python3 scripts/batch_update.py --config config/sites.example.json --group sample --post-ids 123 --status draft"
+  }
+}

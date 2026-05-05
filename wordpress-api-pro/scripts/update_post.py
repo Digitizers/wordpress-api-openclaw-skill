@@ -19,14 +19,16 @@ import urllib.request
 import urllib.error
 from base64 import b64encode
 
-def update_post(url, username, password, post_id, **updates):
+from security import SafetyError, TEXT_MAX_BYTES, die_safety, validate_local_file
+
+def update_post(url, username, app_credential, post_id, **updates):
     """Update WordPress post via REST API"""
     
     # Build API endpoint
     api_url = f"{url.rstrip('/')}/wp-json/wp/v2/posts/{post_id}"
     
     # Prepare auth header
-    credentials = f"{username}:{password}".encode('utf-8')
+    credentials = f"{username}:{app_credential}".encode('utf-8')
     auth_header = b64encode(credentials).decode('ascii')
     
     # Build request data
@@ -97,22 +99,27 @@ def main():
         print(json.dumps({"error": "App password required (--app-password or WP_APP_PASSWORD)"}), file=sys.stderr)
         sys.exit(1)
     
-    # Read content from file if specified
+    # Read content from file if specified. The safety helper restricts reads to
+    # the current working directory by default; opt in to other roots with
+    # WP_ALLOWED_FILE_ROOTS=/safe/path[:/another/path].
     content = args.content
     if args.content_file:
         try:
-            with open(args.content_file, 'r', encoding='utf-8') as f:
+            content_path = validate_local_file(args.content_file, purpose="content file", max_bytes=TEXT_MAX_BYTES)
+            with open(content_path, 'r', encoding='utf-8') as f:
                 content = f.read()
+        except SafetyError as e:
+            die_safety(e)
         except Exception as e:
             print(json.dumps({"error": f"Failed to read content file: {e}"}), file=sys.stderr)
             sys.exit(1)
     
     # Update post
     update_post(
-        url=args.url,
-        username=args.username,
-        password=args.app_password,
-        post_id=args.post_id,
+        args.url,
+        args.username,
+        args.app_password,
+        args.post_id,
         content=content,
         title=args.title,
         status=args.status,

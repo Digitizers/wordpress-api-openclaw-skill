@@ -77,7 +77,10 @@ def main():
     parser.add_argument('--status', choices=['publish', 'draft', 'pending', 'private'])
     parser.add_argument('--meta-key', help='Meta key to update')
     parser.add_argument('--meta-value', help='Meta value to set')
-    parser.add_argument('--dry-run', action='store_true', help='Show what would be done')
+    parser.add_argument('--dry-run', action='store_true', help='Preview what would be done (default unless --execute is passed)')
+    parser.add_argument('--execute', action='store_true', help='Actually apply changes. Without this, batch_update runs in dry-run mode.')
+    parser.add_argument('--allow-all', action='store_true', help='Allow targeting every configured site with --sites all or group all')
+    parser.add_argument('--yes', action='store_true', help='Skip interactive confirmation when using --execute')
     parser.add_argument('--config', default=os.getenv('WP_CONFIG'))
     
     args = parser.parse_args()
@@ -87,8 +90,10 @@ def main():
     
     # Determine sites to update
     site_names = []
+    targeted_all = False
     if args.sites:
         if args.sites == 'all':
+            targeted_all = True
             site_names = list(config['sites'].keys())
         else:
             site_names = [s.strip() for s in args.sites.split(',')]
@@ -96,9 +101,14 @@ def main():
         if args.group not in config.get('groups', {}):
             print(f"Error: Group '{args.group}' not found", file=sys.stderr)
             sys.exit(1)
+        targeted_all = args.group == 'all'
         site_names = config['groups'][args.group]
     else:
         print("Error: Specify --sites or --group", file=sys.stderr)
+        sys.exit(1)
+
+    if targeted_all and not args.allow_all:
+        print("Error: targeting all sites requires --allow-all", file=sys.stderr)
         sys.exit(1)
     
     # Parse post IDs
@@ -119,11 +129,20 @@ def main():
         print("Error: No updates specified (--status, --meta-key + --meta-value)", file=sys.stderr)
         sys.exit(1)
     
+    effective_dry_run = not args.execute or args.dry_run
+
     # Execute
     print(f"Batch update: {len(site_names)} sites, {len(post_ids)} posts")
     print(f"Updates: {updates}")
-    if args.dry_run:
-        print("[DRY RUN MODE]")
+    if effective_dry_run:
+        print("[DRY RUN MODE] Pass --execute to apply changes.")
+    else:
+        confirmation = f"APPLY {len(site_names)} SITES {len(post_ids)} POSTS"
+        if not args.yes:
+            print(f"This will modify live WordPress content. Type exactly: {confirmation}")
+            if input("> ").strip() != confirmation:
+                print("Aborted: confirmation did not match", file=sys.stderr)
+                sys.exit(1)
     print()
     
     total_success = 0
@@ -138,7 +157,7 @@ def main():
         print(f"{site_name} ({site['url']}):")
         
         for post_id in post_ids:
-            if update_post(site, post_id, updates, args.dry_run):
+            if update_post(site, post_id, updates, effective_dry_run):
                 total_success += 1
             else:
                 total_failed += 1

@@ -1,0 +1,202 @@
+---
+name: wordpress-api-pro
+description: |
+  WordPress REST API integration for managing posts, pages, media, WooCommerce products, Elementor content, SEO meta, ACF, and JetEngine fields.
+  Use when you need to retrieve, draft, create, or update WordPress content programmatically on sites where the user has provided explicit credentials.
+  For any operation that writes to a live site, get explicit user approval for the target site, post/product IDs, and final action before executing.
+  Prefer drafts first. Run batch operations in dry-run mode first; use --execute only after review. Remote URL media downloads and local file reads are restricted by safety boundaries.
+---
+
+# WordPress API Pro
+
+Manage WordPress sites through the REST API from an OpenClaw skill.
+
+## Safety rules
+
+- **Never publish or update live content without explicit user approval.** Confirm target site, IDs, fields, and status.
+- **Use least-privilege credentials.** Prefer a dedicated WordPress user/application password scoped to the required role.
+- **Do not store production credentials in the repo.** Use environment variables when possible.
+- **Protect config files.** If you create `config/sites.json`, keep it local, untracked, and `chmod 600 config/sites.json`.
+- **Batch changes are dry-run by default.** Add `--execute` only after reviewing the dry-run output.
+- **Targeting every site is blocked by default.** Add `--allow-all` only when the user explicitly approved all configured sites.
+- **Local file reads are restricted.** `--content-file` and media uploads can read only from the current working directory by default. Set `WP_ALLOWED_FILE_ROOTS` to opt into another safe directory.
+- **Remote media URLs are opt-in.** `upload_media.py` requires `--allow-remote-url` or `WP_ALLOW_REMOTE_URLS=1`, allows HTTPS only, and blocks private/local network hosts.
+
+## Authentication
+
+Recommended environment variables:
+
+```bash
+export WP_URL="https://example.com"
+export WP_USERNAME="wp-api-user"
+read -rs WP_APP_PASSWORD
+export WP_APP_PASSWORD
+```
+
+Application Password setup:
+1. Open `https://your-site.example/wp-admin/profile.php`.
+2. Create a new Application Password for a dedicated API user.
+3. Copy it once and store it in a secret manager or environment variable.
+4. Rotate/revoke it when no longer needed.
+
+## Quick start
+
+### Read/list posts
+
+```bash
+python3 scripts/get_post.py --post-id 123
+python3 scripts/list_posts.py --per-page 10 --status publish
+```
+
+### Create a draft
+
+```bash
+python3 scripts/create_post.py \
+  --title "Draft title" \
+  --content "Draft content" \
+  --status draft
+```
+
+### Update a post after approval
+
+```bash
+python3 scripts/update_post.py \
+  --post-id 123 \
+  --title "Approved title" \
+  --content "Approved content" \
+  --status draft
+```
+
+### Read content from a local file safely
+
+By default the file must be under the current working directory:
+
+```bash
+python3 scripts/update_post.py \
+  --post-id 123 \
+  --content-file ./content/post-123.html \
+  --status draft
+```
+
+To opt into another safe folder:
+
+```bash
+export WP_ALLOWED_FILE_ROOTS="/absolute/path/to/approved-content"
+python3 scripts/update_post.py --post-id 123 --content-file /absolute/path/to/approved-content/post.html
+```
+
+## Multi-site configuration
+
+Copy the template locally:
+
+```bash
+cp config/sites.example.json config/sites.json
+chmod 600 config/sites.json
+```
+
+Use a dedicated user per site and keep `app_password` values local only.
+
+```json
+{
+  "sites": {
+    "sample-site": {
+      "url": "https://example.com",
+      "username": "wp-api-user",
+      "app_password": "",
+      "description": "Sample site; put the real credential only in local config/sites.json"
+    }
+  },
+  "groups": {
+    "sample": ["sample-site"]
+  }
+}
+```
+
+### CLI wrapper
+
+```bash
+./wp.sh --list-sites
+./wp.sh sample-site get-post --id 123
+./wp.sh sample-site update-post --id 123 --status draft
+```
+
+Group operations require an explicit flag:
+
+```bash
+./wp.sh sample --execute-group update-post --id 123 --status draft
+```
+
+If the group is named `all`, add `--allow-all` only after explicit approval:
+
+```bash
+./wp.sh all --execute-group --allow-all update-post --id 123 --status draft
+```
+
+## Batch operations
+
+Batch mode is dry-run unless `--execute` is present:
+
+```bash
+python3 scripts/batch_update.py \
+  --group sample \
+  --post-ids 123,456 \
+  --status draft
+```
+
+Apply after review:
+
+```bash
+python3 scripts/batch_update.py \
+  --group sample \
+  --post-ids 123,456 \
+  --status draft \
+  --execute
+```
+
+Targeting every site requires explicit opt-in:
+
+```bash
+python3 scripts/batch_update.py \
+  --group all \
+  --allow-all \
+  --post-ids 123 \
+  --status draft
+```
+
+## Media upload
+
+Local file upload, restricted to allowed file roots:
+
+```bash
+python3 scripts/upload_media.py \
+  --file ./media/image.jpg \
+  --title "Image title"
+```
+
+Remote URL upload, explicit opt-in and HTTPS-only:
+
+```bash
+python3 scripts/upload_media.py \
+  --file https://cdn.example.com/image.jpg \
+  --allow-remote-url \
+  --title "Image title"
+```
+
+## Plugin integrations
+
+- `scripts/detect_plugins.py` — detect ACF, Rank Math, Yoast, JetEngine.
+- `scripts/acf_fields.py` — read/write ACF fields.
+- `scripts/seo_meta.py` — read/write Rank Math and Yoast SEO metadata.
+- `scripts/jetengine_fields.py` — read/write JetEngine custom fields.
+- `scripts/elementor_content.py` — read/update Elementor `_elementor_data`.
+- `scripts/woo_products.py` — manage WooCommerce products.
+
+## Verification before live writes
+
+Before any live mutation:
+1. Confirm the site URL.
+2. Confirm post/page/product IDs.
+3. Confirm fields and status.
+4. Prefer `draft` unless the user explicitly approves `publish`.
+5. Run dry-run for batch operations.
+6. Keep a backup/export for critical content.

@@ -1,40 +1,46 @@
 #!/usr/bin/env python3
 """Upload media files to WordPress via REST API"""
-import argparse, json, os, sys, urllib.request, urllib.parse, mimetypes
+import argparse, json, os, sys, urllib.request, urllib.parse, urllib.error, mimetypes
 from base64 import b64encode
 
-def upload_media(url, username, password, file_path, title=None, alt_text=None, caption=None):
+from security import SafetyError, die_safety, fetch_https_media, validate_local_file
+
+def upload_media(url, username, app_credential, file_path, title=None, alt_text=None, caption=None, allow_remote_url=False):
     """Upload a media file to WordPress"""
     api_url = f"{url.rstrip('/')}/wp-json/wp/v2/media"
-    credentials = f"{username}:{password}".encode('utf-8')
+    credentials = f"{username}:{app_credential}".encode('utf-8')
     auth_header = b64encode(credentials).decode('ascii')
     
     # Determine if file_path is URL or local path
     is_url = file_path.startswith('http://') or file_path.startswith('https://')
     
     if is_url:
-        # Download file from URL first
+        # Remote URL fetching is disabled unless explicitly requested. This
+        # prevents prompt-injection driven exfiltration/SSRF in agentic use.
+        if not allow_remote_url and os.getenv('WP_ALLOW_REMOTE_URLS') != '1':
+            raise SafetyError("Remote media URLs require --allow-remote-url or WP_ALLOW_REMOTE_URLS=1")
         try:
-            with urllib.request.urlopen(file_path) as response:
-                file_data = response.read()
-                filename = os.path.basename(urllib.parse.urlparse(file_path).path)
-                content_type = response.headers.get('Content-Type', 'application/octet-stream')
+            response, file_data = fetch_https_media(file_path)
+            filename = os.path.basename(urllib.parse.urlparse(file_path).path) or 'remote-media'
+            content_type = response.headers.get('Content-Type', 'application/octet-stream')
+        except SafetyError:
+            raise
         except Exception as e:
             print(json.dumps({"error": f"Failed to download file: {str(e)}"}), file=sys.stderr)
             sys.exit(1)
     else:
-        # Read local file
-        if not os.path.exists(file_path):
-            print(json.dumps({"error": f"File not found: {file_path}"}), file=sys.stderr)
-            sys.exit(1)
-        
-        filename = os.path.basename(file_path)
-        content_type, _ = mimetypes.guess_type(file_path)
+        # Read local file after validating it is inside an allowed root.
+        try:
+            safe_path = validate_local_file(file_path, purpose="media file")
+        except SafetyError:
+            raise
+        filename = os.path.basename(safe_path)
+        content_type, _ = mimetypes.guess_type(safe_path)
         if not content_type:
             content_type = 'application/octet-stream'
         
         try:
-            with open(file_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 file_data = f.read()
         except Exception as e:
             print(json.dumps({"error": f"Failed to read file: {str(e)}"}), file=sys.stderr)
@@ -92,10 +98,10 @@ def upload_media(url, username, password, file_path, title=None, alt_text=None, 
         print(json.dumps({"error": str(e)}), file=sys.stderr)
         sys.exit(1)
 
-def set_featured_image(url, username, password, post_id, media_id):
+def set_featured_image(url, username, app_credential, post_id, media_id):
     """Set featured image for a post"""
     api_url = f"{url.rstrip('/')}/wp-json/wp/v2/posts/{post_id}"
-    credentials = f"{username}:{password}".encode('utf-8')
+    credentials = f"{username}:{app_credential}".encode('utf-8')
     auth_header = b64encode(credentials).decode('ascii')
     
     data = {'featured_media': media_id}
@@ -122,6 +128,7 @@ parser.add_argument('--alt-text', help='Alt text for images')
 parser.add_argument('--caption', help='Media caption')
 parser.add_argument('--set-featured', action='store_true', help='Set as featured image')
 parser.add_argument('--post-id', type=int, help='Post ID (required with --set-featured)')
+parser.add_argument('--allow-remote-url', action='store_true', help='Explicitly allow fetching HTTPS remote media URLs')
 
 args = parser.parse_args()
 
@@ -134,15 +141,19 @@ if args.set_featured and not args.post_id:
     sys.exit(1)
 
 # Upload media
-result = upload_media(
-    args.url, 
-    args.username, 
-    args.app_password, 
-    args.file,
-    title=args.title,
-    alt_text=args.alt_text,
-    caption=args.caption
-)
+try:
+    result = upload_media(
+        args.url,
+        args.username,
+        args.app_password,
+        args.file,
+        title=args.title,
+        alt_text=args.alt_text,
+        caption=args.caption,
+        allow_remote_url=args.allow_remote_url,
+    )
+except SafetyError as e:
+    die_safety(e)
 
 # Set as featured image if requested
 if args.set_featured and 'id' in result:

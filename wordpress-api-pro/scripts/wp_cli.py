@@ -3,8 +3,8 @@
 WordPress CLI - Multi-site wrapper (v3.0.0 - Secure)
 
 Usage:
-    # Using env vars (recommended):
-    WP_URL="https://site.com" WP_USERNAME="admin" WP_APP_PASSWORD="xxxx" \\
+    # Using env vars (recommended): set WP_APP_PASSWORD in your shell first.
+    WP_URL="https://site.com" WP_USERNAME="wp-api-user" \\
         wp_cli.py update-post --id 123 --content "..."
     
     # Using config file (fallback):
@@ -127,6 +127,8 @@ def main():
     parser.add_argument('--list-sites', action='store_true', help='List configured sites')
     parser.add_argument('--list-groups', action='store_true', help='List configured groups')
     parser.add_argument('--config', default=os.getenv('WP_CONFIG'), help='Config file path')
+    parser.add_argument('--execute-group', action='store_true', help='Required for commands that run across a configured group')
+    parser.add_argument('--allow-all', action='store_true', help='Required when the target group is named all')
     
     # Parse known args, pass rest to underlying script
     args, remaining = parser.parse_known_args()
@@ -161,7 +163,13 @@ def main():
     site_type, site_data = get_site_config(config, args.site)
     
     if site_type == 'group':
-        # Run on all sites in group
+        # Run on all sites in group only after explicit opt-in.
+        if not args.execute_group:
+            print("Error: group operations require --execute-group", file=sys.stderr)
+            sys.exit(1)
+        if args.site == 'all' and not args.allow_all:
+            print("Error: group 'all' requires --allow-all", file=sys.stderr)
+            sys.exit(1)
         print(f"Running on group '{args.site}': {', '.join(site_data)}")
         for site_name in site_data:
             site_config = config['sites'][site_name]
