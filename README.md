@@ -2,7 +2,20 @@
 
 [![CI](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/Digitizers/wordpress-api-pro/actions/workflows/ci.yml)
 
-OpenClaw WordPress API Pro skill repository.
+OpenClaw WordPress API Pro skill repository. Manage WordPress posts, pages, media, WooCommerce, Elementor, SEO meta, ACF, and JetEngine fields programmatically — with explicit safety boundaries for agentic use.
+
+## Features
+
+- ✅ **Full CRUD** — create, read, update, and delete WordPress posts/pages.
+- ✅ **Gutenberg support** — work with native block content safely.
+- ✅ **Elementor content** — read and update Elementor `_elementor_data` content.
+- ✅ **Media upload** — upload local media or explicitly approved HTTPS remote media.
+- ✅ **WooCommerce products** — manage product data through the REST API.
+- ✅ **Plugin fields** — ACF, JetEngine, Rank Math, and Yoast SEO helpers.
+- ✅ **Multi-site workflows** — site config, groups, and wrapper commands via `wp.sh`.
+- ✅ **Dry-run-first batch operations** — preview bulk changes before execution.
+- ✅ **Safety gates** — protected local file reads, remote URL checks, and explicit live-write flags.
+- ✅ **CI verified** — Python 3.11/3.12/3.13 smoke tests and package validation.
 
 The actual skill payload lives in:
 
