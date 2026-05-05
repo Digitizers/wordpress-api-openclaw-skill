@@ -2,7 +2,8 @@
   "name": "wordpress-api-pro",
   "version": "3.4.0",
   "description": "WordPress REST API integration skill for OpenClaw - manage posts, pages, media, WooCommerce, Elementor, and metadata with explicit safety boundaries",
-  "main": "SKILL.md",
+  "private": true,
+  "main": "wordpress-api-pro/SKILL.md",
   "keywords": [
     "openclaw",
     "openclaw-skill",
@@ -21,10 +22,9 @@
   "license": "MIT-0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Digitizers/wordpress-api-pro.git",
-    "directory": "wordpress-api-pro"
+    "url": "https://github.com/Digitizers/wordpress-api-pro.git"
   },
-  "homepage": "https://github.com/Digitizers/wordpress-api-pro/tree/main/wordpress-api-pro#readme",
+  "homepage": "https://github.com/Digitizers/wordpress-api-pro#readme",
   "bugs": {
     "url": "https://github.com/Digitizers/wordpress-api-pro/issues"
   },
@@ -34,6 +34,7 @@
   "openclaw": {
     "type": "skill",
     "category": "integrations",
+    "skillDirectory": "wordpress-api-pro",
     "tags": [
       "wordpress",
       "api",
@@ -47,16 +48,18 @@
     ]
   },
   "files": [
-    "SKILL.md",
+    "wordpress-api-pro/SKILL.md",
+    "wordpress-api-pro/config/sites.example.json",
+    "wordpress-api-pro/references/**/*.md",
+    "wordpress-api-pro/scripts/**/*.py",
+    "wordpress-api-pro/wp.sh",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE.txt",
-    "config/sites.example.json",
-    "references/**/*.md",
-    "scripts/**/*.py",
-    "wp.sh"
+    "LICENSE.txt"
   ],
   "scripts": {
-    "test": "python3 -m compileall scripts && python3 scripts/batch_update.py --config config/sites.example.json --group sample --post-ids 123 --status draft"
+    "test": "cd wordpress-api-pro && python3 -m compileall scripts && python3 scripts/batch_update.py --config config/sites.example.json --group sample --post-ids 123 --status draft",
+    "test:syntax": "bash -n wordpress-api-pro/wp.sh && python3 -m compileall wordpress-api-pro/scripts",
+    "pack:skill": "cd wordpress-api-pro && zip -r ../wordpress-api-pro-${npm_package_version}.zip . -x '*/__pycache__/*' '*.pyc'"
   }
 }

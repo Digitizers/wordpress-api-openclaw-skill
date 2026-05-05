@@ -1,5 +1,7 @@
 ---
 name: wordpress-api-pro
+version: 3.4.0
+license: MIT-0
 description: |
   WordPress REST API integration for managing posts, pages, media, WooCommerce products, Elementor content, SEO meta, ACF, and JetEngine fields.
   Use when you need to retrieve, draft, create, or update WordPress content programmatically on sites where the user has provided explicit credentials.
